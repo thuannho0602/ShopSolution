@@ -16,5 +16,11 @@ namespace ShopSolutions.Entity
         public bool IsShowOnHome { get; set; }
         public int? ParentId { get; set; }
         public Status Status { get; set; }
+
+        [ForeignKey("ProductId")]
+        public ICollection<ProductInCategory> ProductInCategories { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public ICollection<CategoryTranslation> CategoryTranslations { get; set; }
     }
 }

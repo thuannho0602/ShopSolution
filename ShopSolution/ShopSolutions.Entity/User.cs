@@ -16,7 +16,9 @@ namespace ShopSolutions.Entity
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        public List<Cart> Carts { get; set; }
+        [ForeignKey("UserId")]
+        public ICollection<Cart> Carts { get; set; }
+        
         public List<Order> Orders { get; set; }
         public List<Transaction> Transactions { get; set; }
     }

@@ -10,13 +10,16 @@ namespace ShopSolutions.Entity
     [Table("Language")] // Ngôn ngữ
     public class Language
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
         public bool IsDefault { get; set; }
-        public List<ProductTranslation> ProductTranslations { get; set; }
 
-        public List<CategoryTranslation> CategoryTranslations { get; set; }
+        [ForeignKey("ProductId")]
+        public ICollection<ProductTranslation> ProductTranslations { get; set; }
+
+        [ForeignKey("LanguageId")]
+        public ICollection<CategoryTranslation> CategoryTranslations { get; set; }
     }
 }

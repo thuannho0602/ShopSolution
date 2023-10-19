@@ -20,13 +20,14 @@ namespace ShopSolutions.Entity
 
         [Required]
         public string SeoAlias { get; set; }
+        [ForeignKey("ProductId")]
+        public ICollection<ProductInCategory> ProductInCategories { get; set; }
+        [ForeignKey("ProductId")]
+        public ICollection<OrderDetail> OrderDetails { get; set; }
 
-        public List<ProductInCategory> ProductInCategories { get; set; }
-
-        public List<OrderDetail> OrderDetails { get; set; }
-
-        public List<Cart> Carts { get; set; }
-
-        public List<ProductTranslation> ProductTranslations { get; set; }
+        [ForeignKey("ProductId")]
+        public ICollection<Cart> Carts { get; set; }
+        [ForeignKey("ProductId")]
+        public ICollection<ProductTranslation> ProductTranslations { get; set; }
     }
 }

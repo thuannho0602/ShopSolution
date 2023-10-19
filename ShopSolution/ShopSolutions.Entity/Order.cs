@@ -20,6 +20,9 @@ namespace ShopSolutions.Entity
         public string ShipPhoneNumber { set; get; }
         public OrderStatus Status { set; get; }
 
-        public List<OrderDetail> OrderDetails { get; set; }
+        [ForeignKey("OrderId")]
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public User User { set; get; }
+        
     }
 }

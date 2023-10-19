@@ -240,9 +240,8 @@ namespace ShopSolution.API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("LanguageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -303,8 +302,11 @@ namespace ShopSolution.API.Migrations
 
             modelBuilder.Entity("ShopSolutions.Entity.Language", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
@@ -360,12 +362,6 @@ namespace ShopSolution.API.Migrations
 
             modelBuilder.Entity("ShopSolutions.Entity.OrderDetail", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
@@ -378,9 +374,7 @@ namespace ShopSolution.API.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -421,23 +415,13 @@ namespace ShopSolution.API.Migrations
 
             modelBuilder.Entity("ShopSolutions.Entity.ProductInCategory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductId");
+                    b.HasKey("ProductId");
 
                     b.ToTable("ProductInCategory");
                 });
@@ -458,9 +442,8 @@ namespace ShopSolution.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LanguageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -482,8 +465,6 @@ namespace ShopSolution.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LanguageId");
 
                     b.HasIndex("ProductId");
 
@@ -569,7 +550,7 @@ namespace ShopSolution.API.Migrations
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -715,19 +696,21 @@ namespace ShopSolution.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopSolutions.Entity.User", null)
+                    b.HasOne("ShopSolutions.Entity.User", "User")
                         .WithMany("Carts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ShopSolutions.Entity.CategoryTranslation", b =>
                 {
                     b.HasOne("ShopSolutions.Entity.Category", "Category")
-                        .WithMany()
+                        .WithMany("CategoryTranslations")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -745,11 +728,13 @@ namespace ShopSolution.API.Migrations
 
             modelBuilder.Entity("ShopSolutions.Entity.Order", b =>
                 {
-                    b.HasOne("ShopSolutions.Entity.User", null)
+                    b.HasOne("ShopSolutions.Entity.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ShopSolutions.Entity.OrderDetail", b =>
@@ -774,8 +759,8 @@ namespace ShopSolution.API.Migrations
             modelBuilder.Entity("ShopSolutions.Entity.ProductInCategory", b =>
                 {
                     b.HasOne("ShopSolutions.Entity.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .WithMany("ProductInCategories")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -794,7 +779,7 @@ namespace ShopSolution.API.Migrations
                 {
                     b.HasOne("ShopSolutions.Entity.Language", "Language")
                         .WithMany("ProductTranslations")
-                        .HasForeignKey("LanguageId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -811,9 +796,20 @@ namespace ShopSolution.API.Migrations
 
             modelBuilder.Entity("ShopSolutions.Entity.Transaction", b =>
                 {
-                    b.HasOne("ShopSolutions.Entity.User", null)
+                    b.HasOne("ShopSolutions.Entity.User", "User")
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShopSolutions.Entity.Category", b =>
+                {
+                    b.Navigation("CategoryTranslations");
+
+                    b.Navigation("ProductInCategories");
                 });
 
             modelBuilder.Entity("ShopSolutions.Entity.Language", b =>
